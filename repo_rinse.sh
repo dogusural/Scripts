@@ -17,7 +17,7 @@ function clean {
     exit 1
 }
 function init {
-    git submodule sync
+    git submodule sync --recursive
     git submodule update --init --recursive
     exit 1
 }
@@ -36,7 +36,7 @@ case $key in
     -c|--clean)
     clean
     ;;
-    --default)
+    *)
     usage
     ;;
 esac
