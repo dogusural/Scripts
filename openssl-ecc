@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
+
+key_pair=$(openssl ecparam -genkey -name secp256k1 -rand /dev/urandom -outform der | xxd -p -c 1024)
+echo -e "\n\e[91mDER encoded Key Pair :\e[39m ${key_pair}\n"
+pub_key=$(tail -c 131 <<< ${key_pair})
+echo -e "\e[91mUncompressed Raw Public key :\e[39m ${pub_key}\n"
+private_key_head=$( tail -c +15 <<< ${key_pair})
+private_key_tail=$( head -c 64 <<< ${private_key_head})
+echo -e "\e[91mRaw Private key :\e[39m ${private_key_tail}\n"
+printf '%*s\n' "${COLUMNS:-$(tput cols)}" '' | tr ' ' -
