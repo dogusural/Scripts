@@ -1,0 +1,12 @@
+#!/usr/bin/bash
+
+OUTPUT=private.png
+
+
+encoded_private_key=$(openssl genpkey -algorithm ed25519 -outform der|tee priv.der |xxd -p -c 1024 )
+echo -e "\n\e[91mDER encoded Private Key :\e[39m ${encoded_private_key}\n"
+private_key=$(tail -c 65 <<< ${encoded_private_key})
+echo -e "\n\e[91mRAW Private Key :\e[39m ${private_key}\n"
+encoded_public_key=$(cat priv.der |openssl pkey -inform der -outform der -pubout |xxd -p -c 1024)
+echo -e "\n\e[91mDER encoded Public Key :\e[39m ${encoded_public_key}\n"
+
