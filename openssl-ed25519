@@ -2,6 +2,15 @@
 
 OUTPUT=private.png
 
+base58=({1..9} {A..H} {J..N} {P..Z} {a..k} {m..z})
+
+encodeBase58() {
+    # 58 = 0x3A
+    echo -n "$1" | sed -e's/^\(\(00\)*\).*/\1/' -e's/00/1/g' | tr -d '\n'
+    dc -e "16i ${1^^} [3A ~r d0<x]dsxx +f" |
+    while read -r n; do echo -n "${base58[n]}"; done
+}
+
 
 encoded_private_key=$(openssl genpkey -algorithm ed25519 -outform der|tee priv.der |xxd -p -c 1024 )
 echo -e "\n\e[91mDER encoded Private Key :\e[39m ${encoded_private_key}\n"
@@ -10,4 +19,5 @@ echo -e "\n\e[91mRAW Private Key :\e[39m ${private_key}\n"
 encoded_public_key=$(cat priv.der |openssl pkey -inform der -outform der -pubout |xxd -p -c 1024)
 echo -e "\n\e[91mDER encoded Public Key :\e[39m ${encoded_public_key}\n"
 
-qrencode -o $OUTPUT "$private_key"
+encodeBase58 $private_key 2>&1 | tee  | qrencode -o $OUTPUT # add /dev/tty if you want the base58 version to be output to stdout
+
