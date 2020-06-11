@@ -10,3 +10,4 @@ echo -e "\n\e[91mRAW Private Key :\e[39m ${private_key}\n"
 encoded_public_key=$(cat priv.der |openssl pkey -inform der -outform der -pubout |xxd -p -c 1024)
 echo -e "\n\e[91mDER encoded Public Key :\e[39m ${encoded_public_key}\n"
 
+qrencode -o $OUTPUT "$private_key"
